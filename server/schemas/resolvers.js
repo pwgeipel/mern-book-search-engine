@@ -49,7 +49,28 @@ const resolvers = {
               return { token, user };
             },
             //save book
-            //remove book
- } };
+            saveBook: async (parent, {bookData }, context) => {
+              if (context.user) {
+                const updatedUser = await User.findByIdAndUpdate(
+                  { _id: context.user._id },
+                  { $push: { savedBooks: bookData }},
+                  {new: true}
+                );
 
-module.exports = resolvers
+                return updatedUser;
+              }
+            },
+            removeBook: async (parent, {bookId}, context) => {
+              if (context.user) {
+                const updatedUser = await User.findByIdAndUpdate(
+                  { _id: context.user._id},
+                  { $pull: { savedBooks: {bookId}}},
+                  {new: true}
+                )
+                return updatedUser;
+              }
+          
+            }, 
+          }
+}
+module.exports = resolvers;
